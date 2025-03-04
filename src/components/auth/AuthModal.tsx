@@ -2,6 +2,7 @@
 import React from 'react';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import LoginForm from './LoginForm';
 import SignupForm from './SignupForm';
 import { X } from 'lucide-react';
@@ -14,7 +15,7 @@ interface AuthModalProps {
 const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[425px] max-h-[90vh]">
         <DialogHeader className="relative">
           <button 
             onClick={onClose}
@@ -39,13 +40,15 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
             <TabsTrigger value="signup">Sign Up</TabsTrigger>
           </TabsList>
           
-          <TabsContent value="login">
-            <LoginForm onSuccess={onClose} />
-          </TabsContent>
-          
-          <TabsContent value="signup">
-            <SignupForm onSuccess={onClose} />
-          </TabsContent>
+          <ScrollArea className="h-[400px] rounded-md">
+            <TabsContent value="login" className="pt-0 mt-0">
+              <LoginForm onSuccess={onClose} />
+            </TabsContent>
+            
+            <TabsContent value="signup" className="pt-0 mt-0">
+              <SignupForm onSuccess={onClose} />
+            </TabsContent>
+          </ScrollArea>
         </Tabs>
       </DialogContent>
     </Dialog>
