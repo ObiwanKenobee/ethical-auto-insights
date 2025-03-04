@@ -9,7 +9,6 @@ import { Loader2, Lock, Mail, Shield, User } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import { useAuth } from '@/contexts/AuthContext';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { UserRole } from '@/types/auth';
 
 interface LoginFormProps {
   onSuccess: () => void;
@@ -39,8 +38,7 @@ const LoginForm = ({ onSuccess }: LoginFormProps) => {
       const credentials = demoCredentials[role];
       if (!credentials) throw new Error('Invalid demo account');
       
-      // Cast the role string to UserRole type since we're checking it against valid values
-      await login(credentials.email, 'demo-password', role as UserRole);
+      await login(credentials.email, 'demo-password', role);
       
       toast({
         title: "Logged in with demo account",
