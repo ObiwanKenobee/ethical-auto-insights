@@ -7,6 +7,8 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2, Lock, Mail, Shield, User } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
+import { useAuth } from '@/contexts/AuthContext';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 interface LoginFormProps {
   onSuccess: () => void;
@@ -14,31 +16,63 @@ interface LoginFormProps {
 
 const LoginForm = ({ onSuccess }: LoginFormProps) => {
   const { toast } = useToast();
+  const { login } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
+  const [demoAccount, setDemoAccount] = useState('');
+
+  const handleDemoLogin = async (role: string) => {
+    setIsLoading(true);
+    
+    try {
+      const demoCredentials: Record<string, { email: string; name: string; }> = {
+        admin: { email: 'admin@guardian-io.demo', name: 'Admin User' },
+        manufacturer: { email: 'manufacturer@guardian-io.demo', name: 'Manufacturer User' },
+        supplier: { email: 'supplier@guardian-io.demo', name: 'Supplier User' },
+        regulator: { email: 'regulator@guardian-io.demo', name: 'Regulator User' },
+        fleet_manager: { email: 'fleet@guardian-io.demo', name: 'Fleet Manager' }
+      };
+      
+      const credentials = demoCredentials[role];
+      if (!credentials) throw new Error('Invalid demo account');
+      
+      await login(credentials.email, 'demo-password', role);
+      
+      toast({
+        title: "Logged in with demo account",
+        description: `You're now logged in as ${credentials.name} (${role})`,
+      });
+      
+      onSuccess();
+    } catch (error) {
+      toast({
+        title: "Demo login failed",
+        description: error instanceof Error ? error.message : "An error occurred",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      if (demoAccount) {
+        await handleDemoLogin(demoAccount);
+        return;
+      }
       
-      // For demo purposes, let's implement basic validation
+      // Regular login
       if (!email || !password) {
         throw new Error('Please fill in all fields');
       }
       
-      // Successful login
-      localStorage.setItem('guardian-io-demo-user', JSON.stringify({
-        email,
-        role: 'manufacturer',
-        name: email.split('@')[0],
-        authenticated: true
-      }));
+      await login(email, password);
       
       toast({
         title: "Successfully logged in",
@@ -107,6 +141,23 @@ const LoginForm = ({ onSuccess }: LoginFormProps) => {
         </Label>
       </div>
       
+      <div className="space-y-2">
+        <Label htmlFor="demo-account">Or try a demo account</Label>
+        <Select value={demoAccount} onValueChange={setDemoAccount} disabled={isLoading}>
+          <SelectTrigger id="demo-account" className="w-full">
+            <SelectValue placeholder="Select a demo account" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="">None (Use credentials above)</SelectItem>
+            <SelectItem value="admin">Admin Demo</SelectItem>
+            <SelectItem value="manufacturer">Manufacturer Demo</SelectItem>
+            <SelectItem value="supplier">Supplier Demo</SelectItem>
+            <SelectItem value="regulator">Regulator Demo</SelectItem>
+            <SelectItem value="fleet_manager">Fleet Manager Demo</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+      
       <Button type="submit" className="w-full bg-guardian-blue hover:bg-guardian-blue/90" disabled={isLoading}>
         {isLoading ? (
           <>
@@ -116,7 +167,7 @@ const LoginForm = ({ onSuccess }: LoginFormProps) => {
         ) : (
           <>
             <User className="mr-2 h-4 w-4" />
-            Log In
+            {demoAccount ? `Log In as ${demoAccount.charAt(0).toUpperCase() + demoAccount.slice(1)}` : 'Log In'}
           </>
         )}
       </Button>
