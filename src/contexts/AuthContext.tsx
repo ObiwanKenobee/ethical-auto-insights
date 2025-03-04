@@ -10,6 +10,7 @@ interface User {
   name: string;
   role: UserRole;
   authenticated: boolean;
+  isDemo?: boolean;
 }
 
 // Define permissions for each role
@@ -45,7 +46,7 @@ const rolePermissions = {
 interface AuthContextType {
   user: User | null;
   isLoading: boolean;
-  login: (email: string, password: string) => Promise<void>;
+  login: (email: string, password: string, demoRole?: UserRole) => Promise<void>;
   logout: () => void;
   signup: (user: Omit<User, 'id' | 'authenticated'>) => Promise<void>;
   checkPermission: (permission: string) => boolean;
@@ -86,16 +87,24 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, []);
 
   // Login function
-  const login = async (email: string, password: string) => {
+  const login = async (email: string, password: string, demoRole?: UserRole) => {
     setIsLoading(true);
     try {
-      // In a real app, this would be an API call to authenticate
-      // For demo, we'll just simulate a successful login
+      // For demo accounts, use the specified role
+      // For regular accounts, we'd normally do API validation here
+      const role = demoRole || 'manufacturer'; // Default role if not specified
+      const isDemo = !!demoRole; // If demoRole is provided, mark as a demo account
+      
+      const displayName = email.split('@')[0];
+      // Format name for demo accounts (remove "demo-" prefix if present)
+      const name = isDemo ? displayName.replace('demo-', '').charAt(0).toUpperCase() + displayName.replace('demo-', '').slice(1) : displayName;
+
       const user: User = {
         email,
-        name: email.split('@')[0],
-        role: 'manufacturer', // Default role for demo
-        authenticated: true
+        name: name,
+        role: role,
+        authenticated: true,
+        isDemo: isDemo
       };
       
       localStorage.setItem('guardian-io-demo-user', JSON.stringify(user));
