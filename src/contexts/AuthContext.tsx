@@ -1,5 +1,6 @@
 
 import React, { createContext, useContext, useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 // Define User types based on RBAC
 type UserRole = 'admin' | 'manufacturer' | 'supplier' | 'regulator' | 'fleet_manager' | null;
@@ -42,6 +43,15 @@ const rolePermissions = {
   ]
 };
 
+// Role to dashboard path mapping
+export const roleDashboardMap: Record<string, string> = {
+  'admin': '/admin',
+  'manufacturer': '/manufacturer',
+  'supplier': '/supplier',
+  'regulator': '/regulator',
+  'fleet_manager': '/fleet-manager'
+};
+
 // Context interface
 interface AuthContextType {
   user: User | null;
@@ -50,6 +60,7 @@ interface AuthContextType {
   logout: () => void;
   signup: (user: Omit<User, 'id' | 'authenticated'>) => Promise<void>;
   checkPermission: (permission: string) => boolean;
+  redirectToDashboard: () => void;
 }
 
 // Create context with default values
@@ -59,7 +70,8 @@ const AuthContext = createContext<AuthContextType>({
   login: async () => {},
   logout: () => {},
   signup: async () => {},
-  checkPermission: () => false
+  checkPermission: () => false,
+  redirectToDashboard: () => {}
 });
 
 export const useAuth = () => useContext(AuthContext);
@@ -67,7 +79,7 @@ export const useAuth = () => useContext(AuthContext);
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-
+  
   useEffect(() => {
     // Check for user in localStorage on initial load
     const checkAuth = () => {
@@ -85,6 +97,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     checkAuth();
   }, []);
+
+  // Function to redirect user to their role-specific dashboard
+  const redirectToDashboard = () => {
+    if (user && user.role && roleDashboardMap[user.role]) {
+      window.location.href = roleDashboardMap[user.role];
+    }
+  };
 
   // Login function
   const login = async (email: string, password: string, demoRole?: UserRole) => {
@@ -109,6 +128,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       
       localStorage.setItem('guardian-io-demo-user', JSON.stringify(user));
       setUser(user);
+      
+      // Automatically redirect to the role-specific dashboard
+      if (role && roleDashboardMap[role]) {
+        window.location.href = roleDashboardMap[role];
+      }
     } catch (error) {
       console.error('Login error:', error);
       throw error;
@@ -121,6 +145,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const logout = () => {
     localStorage.removeItem('guardian-io-demo-user');
     setUser(null);
+    window.location.href = '/';
   };
 
   // Signup function
@@ -135,6 +160,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       
       localStorage.setItem('guardian-io-demo-user', JSON.stringify(user));
       setUser(user);
+      
+      // Redirect to the appropriate dashboard
+      if (user.role && roleDashboardMap[user.role]) {
+        window.location.href = roleDashboardMap[user.role];
+      }
     } catch (error) {
       console.error('Signup error:', error);
       throw error;
@@ -155,7 +185,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     login,
     logout,
     signup,
-    checkPermission
+    checkPermission,
+    redirectToDashboard
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

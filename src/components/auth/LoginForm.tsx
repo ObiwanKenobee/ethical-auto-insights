@@ -1,15 +1,15 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, Lock, Mail, Shield, User, Briefcase, Factory, Truck, FileText, Building } from 'lucide-react';
+import { Loader2, Lock, Mail, Shield, User, Briefcase, Factory, Truck, FileText, Building, Car } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import { useAuth } from '@/contexts/AuthContext';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 
 interface LoginFormProps {
   onSuccess: () => void;
@@ -17,11 +17,18 @@ interface LoginFormProps {
 
 const LoginForm = ({ onSuccess }: LoginFormProps) => {
   const { toast } = useToast();
-  const { login } = useAuth();
+  const { user, login, redirectToDashboard } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
+
+  // Check if user is already logged in
+  useEffect(() => {
+    if (user && user.authenticated) {
+      redirectToDashboard();
+    }
+  }, [user, redirectToDashboard]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -84,11 +91,11 @@ const LoginForm = ({ onSuccess }: LoginFormProps) => {
     { role: 'manufacturer', name: 'Manufacturer', icon: <Factory className="h-5 w-5" />, description: 'Supply chain insights & compliance' },
     { role: 'supplier', name: 'Supplier', icon: <Truck className="h-5 w-5" />, description: 'Material tracking & verification' },
     { role: 'regulator', name: 'Regulator', icon: <FileText className="h-5 w-5" />, description: 'Compliance reports & risk alerts' },
-    { role: 'fleet_manager', name: 'Fleet Manager', icon: <Building className="h-5 w-5" />, description: 'Vehicle tracking & monitoring' }
+    { role: 'fleet_manager', name: 'Fleet Manager', icon: <Car className="h-5 w-5" />, description: 'Vehicle tracking & monitoring' }
   ];
 
   return (
-    <Tabs defaultValue="credentials" className="w-full">
+    <Tabs defaultValue="demo" className="w-full">
       <TabsList className="grid w-full grid-cols-2 mb-6">
         <TabsTrigger value="credentials">Credentials</TabsTrigger>
         <TabsTrigger value="demo">Demo Accounts</TabsTrigger>
