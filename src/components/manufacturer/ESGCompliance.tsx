@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Leaf, BarChart3, LineChart, Droplets, Wind, Thermometer, BadgeAlert } from 'lucide-react';
+import { Leaf, BarChart3, LineChart, Droplets, Wind, Thermometer, BadgeAlert, Check } from 'lucide-react';
 import AnimatedNumber from '@/components/ui-extensions/AnimatedNumber';
 
 const ESGCompliance = () => {

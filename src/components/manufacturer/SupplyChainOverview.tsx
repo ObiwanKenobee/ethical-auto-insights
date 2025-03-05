@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Globe, AlarmClock, AlertCircle, Truck, Factory } from 'lucide-react';
+import { Globe, AlarmClock, AlertCircle, Truck, Factory, Check } from 'lucide-react';
 import AnimatedIcon from '@/components/ui-extensions/AnimatedIcon';
 
 const SupplyChainOverview = () => {
