@@ -1,17 +1,28 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import DashboardLayout from '@/components/dashboard/DashboardLayout';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Factory, TrendingUp, AlertTriangle, Check, Truck, BarChart3 } from 'lucide-react';
+import { Factory, TrendingUp, AlertTriangle, Check, Truck, BarChart3, Globe, Leaf, Shield, AlertCircle } from 'lucide-react';
+
+// Import our dashboard component modules
+import SupplyChainOverview from '@/components/manufacturer/SupplyChainOverview';
+import ESGCompliance from '@/components/manufacturer/ESGCompliance';
+import FactoryMonitoring from '@/components/manufacturer/FactoryMonitoring';
+import SupplierRiskAnalysis from '@/components/manufacturer/SupplierRiskAnalysis';
+import SupplyChainOptimization from '@/components/manufacturer/SupplyChainOptimization';
 
 const ManufacturerDashboard = () => {
+  const [activeTab, setActiveTab] = useState('overview');
+
   return (
     <DashboardLayout 
       pageTitle="Manufacturer Dashboard" 
       roleLabel="Manufacturer"
       roleIcon={<Factory size={22} />}
     >
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+      {/* Top metrics overview */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">ESG Compliance</CardTitle>
@@ -21,26 +32,26 @@ const ManufacturerDashboard = () => {
               <Check className="h-5 w-5 text-green-500 mr-2" />
               <span className="text-2xl font-bold">92%</span>
             </div>
-            <p className="text-xs text-muted-foreground mt-1">+4% from last month</p>
+            <p className="text-xs text-muted-foreground mt-1">+4% from last quarter</p>
           </CardContent>
         </Card>
         
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Production Rate</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">Carbon Footprint</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="flex items-center">
-              <TrendingUp className="h-5 w-5 text-guardian-blue mr-2" />
-              <span className="text-2xl font-bold">842</span>
+              <Leaf className="h-5 w-5 text-green-600 mr-2" />
+              <span className="text-2xl font-bold">-12%</span>
             </div>
-            <p className="text-xs text-muted-foreground mt-1">-3% from last month</p>
+            <p className="text-xs text-muted-foreground mt-1">Year-over-year reduction</p>
           </CardContent>
         </Card>
         
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Material Alerts</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">Supply Chain Alerts</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="flex items-center">
@@ -60,54 +71,69 @@ const ManufacturerDashboard = () => {
               <Truck className="h-5 w-5 text-guardian-teal mr-2" />
               <span className="text-2xl font-bold">24</span>
             </div>
-            <p className="text-xs text-muted-foreground mt-1">Same as last month</p>
+            <p className="text-xs text-muted-foreground mt-1">Across 14 countries</p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium text-muted-foreground">Supplier Risk Index</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-center">
+              <Shield className="h-5 w-5 text-guardian-blue mr-2" />
+              <span className="text-2xl font-bold">Low</span>
+            </div>
+            <p className="text-xs text-muted-foreground mt-1">2 suppliers need review</p>
           </CardContent>
         </Card>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <Card className="col-span-2">
-          <CardHeader>
-            <CardTitle>Supply Chain Insights</CardTitle>
-            <CardDescription>Real-time view of material sourcing and compliance</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="h-80 flex items-center justify-center bg-gray-100 rounded-md">
-              <BarChart3 size={48} className="text-gray-400" />
-              <p className="ml-3 text-gray-500">Supply Chain Visualization</p>
-            </div>
-          </CardContent>
-        </Card>
+      {/* Tabbed dashboard content */}
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
+        <TabsList className="grid grid-cols-5 w-full lg:w-auto">
+          <TabsTrigger value="overview" className="flex items-center gap-2">
+            <Globe className="h-4 w-4" />
+            <span className="hidden sm:inline">Supply Chain</span>
+          </TabsTrigger>
+          <TabsTrigger value="esg" className="flex items-center gap-2">
+            <Leaf className="h-4 w-4" />
+            <span className="hidden sm:inline">ESG Analysis</span>
+          </TabsTrigger>
+          <TabsTrigger value="factory" className="flex items-center gap-2">
+            <Factory className="h-4 w-4" />
+            <span className="hidden sm:inline">Factory Insights</span>
+          </TabsTrigger>
+          <TabsTrigger value="suppliers" className="flex items-center gap-2">
+            <Shield className="h-4 w-4" />
+            <span className="hidden sm:inline">Supplier Risk</span>
+          </TabsTrigger>
+          <TabsTrigger value="optimization" className="flex items-center gap-2">
+            <TrendingUp className="h-4 w-4" />
+            <span className="hidden sm:inline">Optimization</span>
+          </TabsTrigger>
+        </TabsList>
         
-        <Card>
-          <CardHeader>
-            <CardTitle>Recent Supplier Updates</CardTitle>
-            <CardDescription>Latest changes from your material suppliers</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {[
-                { supplier: 'EcoTex Materials', update: 'New certification added', time: '2h ago' },
-                { supplier: 'GreenMetal Inc.', update: 'Shipment in transit', time: '5h ago' },
-                { supplier: 'Sustainable Plastics', update: 'Compliance report updated', time: '1d ago' },
-                { supplier: 'EthiChem Corp', update: 'Price update notification', time: '1d ago' },
-                { supplier: 'Clean Tech Solutions', update: 'New material available', time: '2d ago' },
-              ].map((update, index) => (
-                <div key={index} className="flex items-start pb-3 border-b border-gray-100 last:border-0 last:pb-0">
-                  <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center mr-3">
-                    <Truck size={14} />
-                  </div>
-                  <div>
-                    <p className="text-sm font-medium">{update.supplier}</p>
-                    <p className="text-xs text-gray-500">{update.update}</p>
-                    <p className="text-xs text-gray-400 mt-1">{update.time}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+        <TabsContent value="overview" className="space-y-4">
+          <SupplyChainOverview />
+        </TabsContent>
+        
+        <TabsContent value="esg" className="space-y-4">
+          <ESGCompliance />
+        </TabsContent>
+        
+        <TabsContent value="factory" className="space-y-4">
+          <FactoryMonitoring />
+        </TabsContent>
+        
+        <TabsContent value="suppliers" className="space-y-4">
+          <SupplierRiskAnalysis />
+        </TabsContent>
+        
+        <TabsContent value="optimization" className="space-y-4">
+          <SupplyChainOptimization />
+        </TabsContent>
+      </Tabs>
     </DashboardLayout>
   );
 };
