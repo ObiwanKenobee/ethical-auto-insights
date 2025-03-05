@@ -1,10 +1,40 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import DashboardLayout from '@/components/dashboard/DashboardLayout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Shield, Users, AlertTriangle, Building, FileText, BarChart3 } from 'lucide-react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { 
+  Shield, 
+  Users, 
+  AlertTriangle, 
+  Building, 
+  FileText, 
+  BarChart3,
+  Globe,
+  Lock,
+  Key,
+  Bot,
+  Link,
+  Server,
+  List,
+  Eye,
+  Search,
+  UserCheck,
+  UserX,
+  CheckCircle,
+  XCircle,
+  Clock
+} from 'lucide-react';
+
+import SystemOverview from '@/components/admin/SystemOverview';
+import UserManagement from '@/components/admin/UserManagement';
+import RiskIntelligence from '@/components/admin/RiskIntelligence';
+import ComplianceTracker from '@/components/admin/ComplianceTracker';
+import PlatformSecurity from '@/components/admin/PlatformSecurity';
 
 const AdminDashboard = () => {
+  const [activeTab, setActiveTab] = useState('overview');
+
   return (
     <DashboardLayout 
       pageTitle="Admin Dashboard" 
@@ -65,49 +95,55 @@ const AdminDashboard = () => {
         </Card>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <Card className="col-span-2">
-          <CardHeader>
-            <CardTitle>System-wide Supply Chain Overview</CardTitle>
-            <CardDescription>Real-time visibility across all manufacturers and suppliers</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="h-80 flex items-center justify-center bg-gray-100 rounded-md">
-              <BarChart3 size={48} className="text-gray-400" />
-              <p className="ml-3 text-gray-500">Supply Chain Analytics Visualization</p>
-            </div>
-          </CardContent>
-        </Card>
+      <Tabs defaultValue="overview" value={activeTab} onValueChange={setActiveTab} className="space-y-4">
+        <TabsList className="grid w-full md:w-auto md:inline-flex grid-cols-2 md:grid-cols-5 gap-4 h-auto bg-transparent">
+          <TabsTrigger value="overview" className="data-[state=active]:bg-guardian-blue data-[state=active]:text-white">
+            <Globe className="mr-2 h-4 w-4" />
+            <span className="hidden md:inline">System Overview</span>
+            <span className="md:hidden">Overview</span>
+          </TabsTrigger>
+          <TabsTrigger value="users" className="data-[state=active]:bg-guardian-blue data-[state=active]:text-white">
+            <Users className="mr-2 h-4 w-4" />
+            <span className="hidden md:inline">User Management</span>
+            <span className="md:hidden">Users</span>
+          </TabsTrigger>
+          <TabsTrigger value="risk" className="data-[state=active]:bg-guardian-blue data-[state=active]:text-white">
+            <AlertTriangle className="mr-2 h-4 w-4" />
+            <span className="hidden md:inline">Risk Intelligence</span>
+            <span className="md:hidden">Risk</span>
+          </TabsTrigger>
+          <TabsTrigger value="compliance" className="data-[state=active]:bg-guardian-blue data-[state=active]:text-white">
+            <FileText className="mr-2 h-4 w-4" />
+            <span className="hidden md:inline">Compliance Tracker</span>
+            <span className="md:hidden">Compliance</span>
+          </TabsTrigger>
+          <TabsTrigger value="security" className="data-[state=active]:bg-guardian-blue data-[state=active]:text-white">
+            <Lock className="mr-2 h-4 w-4" />
+            <span className="hidden md:inline">Platform Security</span>
+            <span className="md:hidden">Security</span>
+          </TabsTrigger>
+        </TabsList>
         
-        <Card>
-          <CardHeader>
-            <CardTitle>Recent User Activity</CardTitle>
-            <CardDescription>Latest actions from platform users</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {[
-                { user: 'Jennifer Smith', action: 'Added new supplier', time: '23m ago' },
-                { user: 'Michael Johnson', action: 'Approved ESG report', time: '1h ago' },
-                { user: 'Sarah Wilson', action: 'Updated factory compliance', time: '3h ago' },
-                { user: 'David Brown', action: 'Flagged materials issue', time: '5h ago' },
-                { user: 'Lisa Davis', action: 'Generated audit report', time: '6h ago' },
-              ].map((activity, index) => (
-                <div key={index} className="flex items-start pb-3 border-b border-gray-100 last:border-0 last:pb-0">
-                  <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center mr-3">
-                    {activity.user.charAt(0)}
-                  </div>
-                  <div>
-                    <p className="text-sm font-medium">{activity.user}</p>
-                    <p className="text-xs text-gray-500">{activity.action}</p>
-                    <p className="text-xs text-gray-400 mt-1">{activity.time}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+        <TabsContent value="overview" className="space-y-4">
+          <SystemOverview />
+        </TabsContent>
+        
+        <TabsContent value="users" className="space-y-4">
+          <UserManagement />
+        </TabsContent>
+        
+        <TabsContent value="risk" className="space-y-4">
+          <RiskIntelligence />
+        </TabsContent>
+        
+        <TabsContent value="compliance" className="space-y-4">
+          <ComplianceTracker />
+        </TabsContent>
+        
+        <TabsContent value="security" className="space-y-4">
+          <PlatformSecurity />
+        </TabsContent>
+      </Tabs>
     </DashboardLayout>
   );
 };
