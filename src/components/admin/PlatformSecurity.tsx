@@ -139,7 +139,7 @@ const PlatformSecurity = () => {
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-sm font-medium">Recovery Time</span>
-                  <span className="text-sm">< 15 minutes</span>
+                  <span className="text-sm">&lt; 15 minutes</span>
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-sm font-medium">Last Recovery Test</span>
