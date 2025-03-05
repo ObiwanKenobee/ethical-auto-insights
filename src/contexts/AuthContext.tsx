@@ -79,6 +79,7 @@ export const useAuth = () => useContext(AuthContext);
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const navigate = useNavigate();
   
   useEffect(() => {
     // Check for user in localStorage on initial load
@@ -101,7 +102,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   // Function to redirect user to their role-specific dashboard
   const redirectToDashboard = () => {
     if (user && user.role && roleDashboardMap[user.role]) {
-      window.location.href = roleDashboardMap[user.role];
+      navigate(roleDashboardMap[user.role], { replace: true });
     }
   };
 
@@ -131,7 +132,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       
       // Automatically redirect to the role-specific dashboard
       if (role && roleDashboardMap[role]) {
-        window.location.href = roleDashboardMap[role];
+        navigate(roleDashboardMap[role], { replace: true });
       }
     } catch (error) {
       console.error('Login error:', error);
@@ -145,7 +146,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const logout = () => {
     localStorage.removeItem('guardian-io-demo-user');
     setUser(null);
-    window.location.href = '/';
+    navigate('/', { replace: true });
   };
 
   // Signup function
@@ -163,7 +164,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       
       // Redirect to the appropriate dashboard
       if (user.role && roleDashboardMap[user.role]) {
-        window.location.href = roleDashboardMap[user.role];
+        navigate(roleDashboardMap[user.role], { replace: true });
       }
     } catch (error) {
       console.error('Signup error:', error);
